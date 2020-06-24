@@ -131,6 +131,7 @@ function H = gretna_surf_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 Dir_thisFunction = which('gretna_surf_net_viewer');
 [PathF, ~, ~] = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
+addpath([PathF filesep 'inflatedGiftiFiles']);
 
 
 

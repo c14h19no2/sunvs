@@ -74,6 +74,7 @@ function varargout = gretna_surf_display(Data, varargin)
 Dir_thisFunction = which('gretna_surf_display');
 [PathF, ~, ~] = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
+addpath([PathF filesep 'inflatedGiftiFiles']);
 
 
 
