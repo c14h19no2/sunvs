@@ -291,7 +291,7 @@ end
 %% Edges setting
 if ~isempty(job.pathEdgeFile)
     MAT_Edges = importdata(job.pathEdgeFile);
-    MAT_Edges = MAT_Edges(Nodes_Exist, Nodes_Exist);
+    MAT_Edges = MAT_Edges(Size_Node>0, Size_Node>0);
     MAT_Edges = triu(MAT_Edges);
     
     [Node1_Pos_Edge, Node2_Pos_Edge] = find(MAT_Edges>0);
