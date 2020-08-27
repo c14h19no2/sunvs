@@ -304,7 +304,7 @@ for i = 1:length(sinfo)
     if isfield(job, 'Underlay') 
         if job.multisurf
             MhUnderlay = combine_multisurf(job.Underlay{:});
-            setappdata(H.patch, 'curvature', MhUnderlay.cdata);
+            setappdata(H.patch, 'curvature', double(MhUnderlay.cdata));
             setappdata(H.axis, 'handles', H);
             d = getappdata(H.patch, 'data');
             updateTexture(H, d);
@@ -337,15 +337,15 @@ Mh  = gifti(Mh);
 Moh = gifti(Moh);
 
 if isfield(Mh,'faces')
-    Mh.faces = [double(Mh.faces); double(Moh.faces) + size(Mh.vertices,1)];
+    Mh.faces = [double(Mh.faces); double(Moh.faces) + size(double(Mh.vertices),1)];
 end
 
 if isfield(Mh,'vertices')
-    Mh.vertices = [Mh.vertices; Moh.vertices];
+    Mh.vertices = [double(Mh.vertices); double(Moh.vertices)];
 end
 
 if isfield(Mh,'cdata')
-    Mh.cdata = [Mh.cdata; Moh.cdata];
+    Mh.cdata = [double(Mh.cdata); double(Moh.cdata)];
 end
 
 end
@@ -415,7 +415,7 @@ if ischar(v)
     end
 end
 
-if isa(v,'gifti'), v = v.cdata; end
+if isa(v,'gifti'), v = double(v.cdata); end
 if isa(v,'file_array'), v = v(); end
 
 if isempty(v)

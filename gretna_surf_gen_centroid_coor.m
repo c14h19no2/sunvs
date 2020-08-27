@@ -24,10 +24,10 @@ function [CenCoor] = gretna_surf_gen_centroid_coor(Path_gifti, Path_annot)
 %==========================================================================
 
 g        = gifti(Path_gifti);
-Vertices = g.vertices;
+Vertices = double(g.vertices);
 
 if nargin == 1
-    c            = g.cdata;
+    c            = double(g.cdata);
     Label_region = unique(c(~isnan(c)));
     Num_regs     = max(Label_region);
 elseif nargin == 2
