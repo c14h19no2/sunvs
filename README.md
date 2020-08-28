@@ -1,2 +1,2 @@
-# gretna_net_viewer
+# SUNVS - A Surface-based Brain Network Viewer
  
