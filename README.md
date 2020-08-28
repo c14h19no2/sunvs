@@ -1,5 +1,7 @@
 # SUNVS - A Surface-based Brain Network Viewer
  
+ ![Exapmle File](https://github.com/c14h19no2/SUNVS/blob/master/Example/draft/Example.png "Exapmle File")
+ 
 ## 绘图指引
 
 ### 0. 前期准备
