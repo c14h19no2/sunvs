@@ -353,7 +353,7 @@ ans =
 
 工具包即会绘制出下图，并将其以 600 *dpi* 的分辨率保存到当前工作路径。
 
-![myNodes.s](myNodes.s.png "myNodes.s")
+![myNodes.s](https://github.com/c14h19no2/SUNVS/blob/master/Example/draft/myNodes.s.png "myNodes.s")
 
 我们可以看到，图中的节点 *Node6* 并不清晰，这种情况下，我们可以考虑将透明度调高，或者将 *useUnderlay* 设置为 ‘none’。
 
