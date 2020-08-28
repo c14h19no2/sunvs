@@ -1,10 +1,10 @@
-function h = gretna_surf_plot_3dsphere(x, y, z, scalefactor, shapefactor, AXIS, varargin)
+function h = sunvs_plot_3dsphere(x, y, z, scalefactor, shapefactor, AXIS, varargin)
 
 %==========================================================================
-% This function generates 3D sphere nodes for function gretna_surf_net_viewer.
+% This function generates 3D sphere nodes for function sunvs_net_viewer.
 %
 %
-% Syntax: function h = gretna_surf_plot_3dsphere(x, y, z, scalefactor, axis, varargin)
+% Syntax: function h = sunvs_plot_3dsphere(x, y, z, scalefactor, axis, varargin)
 %
 % Input:
 %        x, y, z:
@@ -28,10 +28,10 @@ function h = gretna_surf_plot_3dsphere(x, y, z, scalefactor, shapefactor, AXIS, 
 %                of each node (N*1 cell).
 %
 % Created from
-% Created by MathWorks Support Team, 2010 (https://www.mathworks.com/matlabcentral/answers/98968-how-do-i-make-a-scatter-plot-with-spheres).
+% Created by MathWorks Support Team, 2010 
+% https://www.mathworks.com/matlabcentral/answers/98968-how-do-i-make-a-scatter-plot-with-spheres
 % Modified by Ningkai WANG, 2020.
 %
-% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/01/13, jinhui.wang.1982@gmail.com
 % Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/01/13, Ningkai.Wang.1993@gmail.com
 %==========================================================================
 

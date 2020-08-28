@@ -1,9 +1,9 @@
-function gretna_surf_ROI_annot2gii(pathAnnot, indROIs, valueROIs, varargin)
+function sunvs_ROI_annot2gii(pathAnnot, indROIs, valueROIs, varargin)
 
 %==========================================================================
 % This function is used to convert annot format to gii format.
 %
-% Syntax: function gretna_surf_ROI_annot2gii(pathAnnot, indROIs, valueROIs, varargin)
+% Syntax: function sunvs_ROI_annot2gii(pathAnnot, indROIs, valueROIs, varargin)
 %
 % Input:
 %      pathAnnot:
@@ -26,7 +26,6 @@ function gretna_surf_ROI_annot2gii(pathAnnot, indROIs, valueROIs, varargin)
 %                                32k mesh version;
 %                'custom',       custom average surface.
 %
-% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/03/24, jinhui.wang.1982@gmail.com
 % Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/03/24, Ningkai.Wang.1993@gmail.com
 %==========================================================================
 

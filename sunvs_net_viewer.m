@@ -1,10 +1,10 @@
-function H = gretna_surf_net_viewer(pathNodeFile, pathEdgeFile, varargin)
+function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 
 %==========================================================================
 % This function is used to display surfaces and brain networks.
 %
 %
-% Syntax: function H = gretna_surf_net_viewer(pathNodeFile, pathEdgeFile, varargin)
+% Syntax: function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 % 
 % Input:
 %     pathNodeFile: 
@@ -30,22 +30,20 @@ function H = gretna_surf_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %              Choose a gifti file to be the mesh overlay.
 %              'none',   no overlay mesh (Default);
 %              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas, 
-%                        for detailed information, see gretna_label);
+%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
 %              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
 %              'Fan',    boundary infomation for Fan_210;
-%              'HCP',    boundary infomation for HCP_360;
+%              'MMP1',    boundary infomation for MMP1_360;
 %              'custom', custom underlay.
 %    'useUnderlay':
 %              Choose a gifti file to be the mesh underlay, this underlay will
 %              be the underlay texture of the display object.
 %              'none',   no overlay mesh (Default);
 %              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas, 
-%                        for detailed information, see gretna_label);
+%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
 %              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
 %              'Fan',    boundary infomation for Fan_210;
-%              'HCP',    boundary infomation for HCP_360;
+%              'MMP1',    boundary infomation for MMP1_360;
 %              'custom', custom underlay.
 %   'TransParency':
 %              Set the transparency for surface object, a value which
@@ -122,13 +120,12 @@ function H = gretna_surf_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %              2: Regular tetrahedron;
 %              3: Dodecahedron.
 %
-% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/03/29, Jinhui.Wang.1982@gmail.com
-% Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/03/29, Ningkai.Wang.1993@gmail.com
+% Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/08/26, Ningkai.Wang.1993@gmail.com
 %==========================================================================
 
 
 %% Add path
-Dir_thisFunction = which('gretna_surf_net_viewer');
+Dir_thisFunction = which('sunvs_net_viewer');
 [PathF, ~, ~] = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
 addpath([PathF filesep 'inflatedGiftiFiles']);
@@ -216,7 +213,7 @@ if job.Data == 'lh.inflated.Uniform.gii'
     end
 end
 
-H = gretna_surf_display(job.Data, PARAs{:});
+H = sunvs_display(job.Data, PARAs{:});
 
 
 
@@ -268,7 +265,7 @@ if ~isempty(job.pathNodeFile)
         end
         
         Color_Nodes = job.colorModules(Module_Nodes_Exist_colntext, :);
-        H.Nodes = gretna_surf_plot_3dsphere(CORR_Nodes_Exist(:, 1), CORR_Nodes_Exist(:, 2),...
+        H.Nodes = sunvs_plot_3dsphere(CORR_Nodes_Exist(:, 1), CORR_Nodes_Exist(:, 2),...
             CORR_Nodes_Exist(:, 3), Size_Nodes_Exist, Module_Nodes_Exist_shape,...
             H.axis, 'colormap', Color_Nodes);
     else % Texturemap
@@ -278,7 +275,7 @@ if ~isempty(job.pathNodeFile)
         end
         
         Texture_Nodes = job.TextureModules(Module_Nodes_Exist_colntext, :);
-        H.Nodes = gretna_surf_plot_3dsphere(CORR_Nodes_Exist(:, 1), CORR_Nodes_Exist(:, 2),...
+        H.Nodes = sunvs_plot_3dsphere(CORR_Nodes_Exist(:, 1), CORR_Nodes_Exist(:, 2),...
                 CORR_Nodes_Exist(:, 3), Size_Nodes_Exist, Module_Nodes_Exist_shape,...
                 H.axis, 'texturemap', Texture_Nodes);
     end

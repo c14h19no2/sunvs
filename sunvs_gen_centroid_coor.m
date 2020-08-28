@@ -1,11 +1,11 @@
-function [CenCoor] = gretna_surf_gen_centroid_coor(Path_gifti, Path_annot)
+function [CenCoor] = sunvs_gen_centroid_coor(Path_gifti, Path_annot)
 
 %==========================================================================
 % This function is used to calculate centroid coordination included of each ROI
 % in a gifti image, where the ROIs are defined by an annot file.
 % 
 %
-% Syntax: function [CenCoor] = gretna_surf_gen_centroid_coor(Path_filename, Path_annot)
+% Syntax: function [CenCoor] = sunvs_gen_centroid_coor(Path_filename, Path_annot)
 %
 % Input:
 %  Path_filename:
@@ -19,7 +19,6 @@ function [CenCoor] = gretna_surf_gen_centroid_coor(Path_gifti, Path_annot)
 %        CenCoor:
 %                The centroid coordination of each ROI.
 %
-% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/01/24, jinhui.wang.1982@gmail.com
 % Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/01/24, Ningkai.Wang.1993@gmail.com
 %==========================================================================
 

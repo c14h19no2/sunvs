@@ -1,10 +1,10 @@
-function varargout = gretna_surf_display(Data, varargin)
+function varargout = sunvs_display(Data, varargin)
 
 %==========================================================================
 % This function is used to display surfaces and brain networks.
 %
 %
-% Syntax: function varargout = gretna_surf_display(Data, varargin)
+% Syntax: function varargout = sunvs_display(Data, varargin)
 % 
 % Input:
 %             Data: 
@@ -27,22 +27,20 @@ function varargout = gretna_surf_display(Data, varargin)
 %              Choose a gifti file to be the mesh overlay.
 %              'none',   no overlay mesh (Default);
 %              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas, 
-%                        for detailed information, see gretna_label);
+%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
 %              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
 %              'Fan',    boundary infomation for Fan_210;
-%              'HCP',    boundary infomation for HCP_360;
+%              'MMP1',    boundary infomation for MMP1_360;
 %              'custom', custom underlay.
 %    'useUnderlay':
 %              Choose a gifti file to be the mesh underlay, this underlay will
 %              be the underlay texture of the display object.
 %              'none',   no overlay mesh (Default);
 %              'mc',     curv infomation for fsaverage surface (Recommended);
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas, 
-%                        **for detailed information**, see gretna_label);
+%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
 %              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
 %              'Fan',    boundary infomation for Fan_210;
-%              'HCP',    boundary infomation for HCP_360;
+%              'MMP1',    boundary infomation for MMP1_360;
 %              'custom', custom underlay.
 %   'TransParency':
 %              Set the transparency for surface object, a value which
@@ -63,15 +61,38 @@ function varargout = gretna_surf_display(Data, varargin)
 %              A data path that you want the image to be output to. When the 
 %              'imgprint' is set to 1 and the value of 'imgprintDir' is unset,
 %              the output directory will be set as the current working directory.
-%           
 % 
-% Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/03/29, Ningkai.Wang.1993@gmail.com
-% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/03/29, jinhui.wang.1982@gmail.com
+% reference:
+%    Atlas - a2009s_150:
+%        Destrieux, C., Fischl, B., Dale, A. and Halgren, E., 2010. Automatic
+%        parcellation of human cortical gyri and sulci using standard anatomical
+%        nomenclature. Neuroimage, 53(1), pp.1-15.
+%
+%    Atlas - DK40_70:
+%        Desikan, R.S., Ségonne, F., Fischl, B., Quinn, B.T., Dickerson, B.C.,
+%        Blacker, D., Buckner, R.L., Dale, A.M., Maguire, R.P., Hyman, B.T.
+%        and Albert, M.S., 2006. An automated labeling system for subdividing
+%        the human cerebral cortex on MRI scans into gyral based regions of
+%        interest. Neuroimage, 31(3), pp.968-980.
+%
+%    Atlas - Fan_210:
+%        Fan, L., Li, H., Zhuo, J., Zhang, Y., Wang, J., Chen, L., Yang, Z.,
+%        Chu, C., Xie, S., Laird, A.R. and Fox, P.T., 2016. The human brainnetome
+%        atlas: a new brain atlas based on connectional architecture. Cerebral
+%        cortex, 26(8), pp.3508-3526.
+%
+%    Atlas - HCP-MMP1:
+%        Glasser, M.F., Coalson, T.S., Robinson, E.C., Hacker, C.D., Harwell, J.,
+%        Yacoub, E., Ugurbil, K., Andersson, J., Beckmann, C.F., Jenkinson, M. and
+%        Smith, S.M., 2016. A multi-modal parcellation of human cerebral cortex.
+%        Nature, 536(7615), pp.171-178.
+%
+% Ningkai WANG, IBRR, SCNU, Guangzhou, 2020/08/28, Ningkai.Wang.1993@gmail.com
 %==========================================================================
 
 
 %% Add path
-Dir_thisFunction = which('gretna_surf_display');
+Dir_thisFunction = which('sunvs_display');
 [PathF, ~, ~] = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
 addpath([PathF filesep 'inflatedGiftiFiles']);
@@ -89,12 +110,12 @@ job.my.fsaverage.central  = {fullfile(spm('dir'),'toolbox','cat12','templates_su
 job.my.fsaverage.inflated = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.inflated.freesurfer.gii')};
 job.my.fsaverage.IXI555   = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.central.Template_T1_IXI555_MNI152_GS.gii')};
 
-Path_Boundary             = fullfile(fileparts(which('gretna_surf_display')), 'nodalBoundaryList');
+Path_Boundary             = fullfile(fileparts(which('sunvs_display')), 'nodalBoundaryList');
 job.my.Overlay.mc         = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.mc.freesurfer.gii')};
 job.my.Overlay.a2009s     = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_a2009s_150.gii')};
 job.my.Overlay.dk40       = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_DK40_70.gii')};
 job.my.Overlay.fan        = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Fan_210.gii')};
-job.my.Overlay.hcp        = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_HCP_360.gii')};
+job.my.Overlay.MMP1        = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_MMP1_360.gii')};
 
 job.my.Underlay           = job.my.Overlay;
 
@@ -148,7 +169,7 @@ switch lower(job.useOverlay)
         
     case 'mc'
         job.Overlay = job.my.Overlay.mc;
-    case {'a2009s','dk40','fan','hcp'}
+    case {'a2009s','dk40','fan','MMP1'}
         job.Overlay = job.my.Overlay.(lower(job.useOverlay));
     case 'custom'
         job.Overlay = spm_select(1, 'mesh', 'Select Overlay files...');
@@ -161,7 +182,7 @@ switch lower(job.useUnderlay)
         
     case 'mc'
         job.Underlay = job.my.Underlay.mc;
-    case {'a2009s','dk40','fan','hcp'}
+    case {'a2009s','dk40','fan','MMP1'}
         job.Underlay = job.my.Underlay.(lower(job.useUnderlay));
     case 'custom'
         job.Underlay = spm_select(1, 'mesh', 'Select Underlay files...');
