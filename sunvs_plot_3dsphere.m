@@ -177,8 +177,6 @@ elseif ~isempty(p.Results.texturemap)
                 
         end
         
-        
-        
     end
 end
 

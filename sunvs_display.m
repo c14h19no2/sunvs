@@ -8,15 +8,14 @@ function varargout = sunvs_display(Data, varargin)
 % 
 % Input:
 %             Data: 
-%                  A directory & filename of the surfaces file (a gifti file
-%                  in 164k fsaverage space) to be displayed.
+%                  Directory & filename of the surfaces gifti (.gii) file.
 % 
 % parameters:
 %      'multisurf':
 %              load both hemispheres if possible.
 %              0 = load single hemisphere (Default);
 %              1 = load both hemisphere.
-%   'usefsaverage':
+%   'useAverageSurf':
 %              Choose an average surface to display. This surface file will
 %              define the shape of meshed object.
 %              'inflated', an inflated brain surface (Default);
@@ -25,23 +24,33 @@ function varargout = sunvs_display(Data, varargin)
 %              'custom',   custom average surface..
 %     'useOverlay':
 %              Choose a gifti file to be the mesh overlay.
-%              'none',   no overlay mesh (Default);
-%              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
-%              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
-%              'Fan',    boundary infomation for Fan_210;
-%              'MMP1',    boundary infomation for MMP1_360;
-%              'custom', custom underlay.
+%              'none',            no overlay mesh (Default);
+%              'mc',              curv infomation for fsaverage surface;
+%              'a2009s',          boundary infomation for a2009s_150 (Destrieux atlas);
+%              'DK40',            boundary infomation for DK40_70 (Desikan atlas);
+%              'Fan',             boundary infomation for Fan_210;
+%              'MMP1',            boundary infomation for MMP1_360;
+%              'gordon',          boundary infomation for MMP1_333;
+%              'schaefer_17_100', boundary infomation for Schaefer_17Networks_100;
+%              'schaefer_17_200', boundary infomation for Schaefer_17Networks_200;
+%              'schaefer_17_400', boundary infomation for Schaefer_17Networks_400;
+%              'schaefer_17_600', boundary infomation for Schaefer_17Networks_600;
+%              'custom',          custom overlay.
 %    'useUnderlay':
 %              Choose a gifti file to be the mesh underlay, this underlay will
 %              be the underlay texture of the display object.
-%              'none',   no overlay mesh (Default);
-%              'mc',     curv infomation for fsaverage surface (Recommended);
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
-%              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
-%              'Fan',    boundary infomation for Fan_210;
-%              'MMP1',    boundary infomation for MMP1_360;
-%              'custom', custom underlay.
+%              'none',            no overlay mesh (Default);
+%              'mc',              curv infomation for fsaverage surface;
+%              'a2009s',          boundary infomation for a2009s_150 (Destrieux atlas);
+%              'DK40',            boundary infomation for DK40_70 (Desikan atlas);
+%              'Fan',             boundary infomation for Fan_210;
+%              'MMP1',            boundary infomation for MMP1_360;
+%              'gordon',          boundary infomation for MMP1_333;
+%              'schaefer_17_100', boundary infomation for Schaefer_17Networks_100;
+%              'schaefer_17_200', boundary infomation for Schaefer_17Networks_200;
+%              'schaefer_17_400', boundary infomation for Schaefer_17Networks_400;
+%              'schaefer_17_600', boundary infomation for Schaefer_17Networks_600;
+%              'custom',          custom underlay.
 %   'TransParency':
 %              Set the transparency for surface object, a value which
 %              ranges from 0 to 1. The default value is 0.55
@@ -91,33 +100,118 @@ function varargout = sunvs_display(Data, varargin)
 %==========================================================================
 
 
+
+%% Extension detection
+[~, ~, ext] = fileparts(Data);
+
+switch ext
+    case '.gii'
+    otherwise
+        error('The SUNVS supports ''.gii'' file only!');
+end
+
+
+
 %% Add path
 Dir_thisFunction = which('sunvs_display');
-[PathF, ~, ~] = fileparts(Dir_thisFunction);
+[PathF, ~, ~]    = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
 addpath([PathF filesep 'inflatedGiftiFiles']);
 
 
 
+%% Determine the template space
+p = inputParser;
+addParameter(p, 'templateSpace', '', @ischar);
+parse(p, varargin{:});
+job.templateSpace = p.Results.templateSpace;
+
+switch job.templateSpace
+    case ''
+        g = gifti(Data);
+        
+        if isempty(g.faces)
+            prompt         = 'Choose the template name:';
+            ListString     = {'fsaverage_164k',...
+                'fs_LR_32k'...
+                'Custom'};
+            [SELECTION, ~] = listdlg('ListString', ListString,...
+                'SelectionMode','single', 'ListSize', [200,100], 'PromptString', prompt);
+            
+            switch SELECTION
+                case 1
+                    job.templateSpace = 'fsaverage_164k';
+                case 2
+                    job.templateSpace = 'fs_LR_32k';
+                case 3
+                    job.templateSpace = [];
+            end
+            
+        else
+            facesData  = int32(double(g.cdata)); % for dealing with class 'file_array'
+            facesStructfs_LR_32k_lh   = load('faces_fs_LR_32k_lh.mat');
+            facesStructfs_LR_32k_rh   = load('faces_fs_LR_32k_rh.mat');
+            facesStructfsaverage_164k = load('faces_fsaverage_164k.mat');
+            
+            if isequal(facesData,     facesStructfs_LR_32k_lh.faces);
+                job.templateSpace     = 'fs_LR_32k';
+            elseif isequal(facesData, facesStructfs_LR_32k_rh.faces);
+                job.templateSpace     = 'fs_LR_32k';
+            elseif isequal(facesData, facesStructfsaverage_164k.faces);
+                job.templateSpace     = 'fsaverage_164k';
+            else
+                error('Unknown template space detected, the SUNVS cannot display the surface!');
+            end
+        end
+    case 'fsaverage_164k'
+        
+    case 'fs_LR_32k'
+        
+end
+
+
+
 %% Default parameters
-job.default.usefsaverage  = 'inflated';
-job.default.useOverlay    = 'none';
-job.default.useUnderlay   = 'none';
-job.default.TransParency  = 0.45;
-job.default.Colormap      = hot(256);
+job.default.useAverageSurf    = 'inflated';
+job.default.useOverlay        = 'none';
+job.default.useUnderlay       = 'none';
+job.default.TransParency      = 0.45;
+job.default.Colormap          = hot(256);
+job.default.SupportedUnderLay = {'a2009s','dk40','fan','mmp1','gordon',...
+    'schaefer_17_100','schaefer_17_200','schaefer_17_400','schaefer_17_600'};
 
-job.my.fsaverage.central  = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.central.freesurfer.gii')};
-job.my.fsaverage.inflated = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.inflated.freesurfer.gii')};
-job.my.fsaverage.IXI555   = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.central.Template_T1_IXI555_MNI152_GS.gii')};
+switch job.templateSpace
+    case 'fsaverage_164k'
+        temFolder = 'templates_surfaces';
+    case 'fs_LR_32k'
+        temFolder = 'templates_surfaces_32k';
+end
 
-Path_Boundary             = fullfile(fileparts(which('sunvs_display')), 'nodalBoundaryList');
-job.my.Overlay.mc         = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces','lh.mc.freesurfer.gii')};
-job.my.Overlay.a2009s     = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_a2009s_150.gii')};
-job.my.Overlay.dk40       = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_DK40_70.gii')};
-job.my.Overlay.fan        = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Fan_210.gii')};
-job.my.Overlay.MMP1        = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_MMP1_360.gii')};
+Path_Boundary               = fullfile(fileparts(which('sunvs_display')), 'nodalBoundaryList');
+job.my.averageSurf.central  = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.freesurfer.gii')};
+job.my.averageSurf.inflated = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.inflated.freesurfer.gii')};
+job.my.averageSurf.IXI555   = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.Template_T1_IXI555_MNI152_GS.gii')};
+job.my.Overlay.mc           = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.mc.freesurfer.gii')};
+        
+switch job.templateSpace
+    case 'fsaverage_164k'
+        job.my.Overlay.a2009s          = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_a2009s_150_fsaverage_164k.gii')};
+        job.my.Overlay.dk40            = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_DK40_70_fsaverage_164k.gii')};
+        job.my.Overlay.fan             = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Fan_210_fsaverage_164k.gii')};
+        job.my.Overlay.mmp1            = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_MMP1_360_fsaverage_164k.gii')};
+        job.my.Overlay.gordon          = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Gordon_333_fsaverage_164k.gii')};
+        job.my.Overlay.Schaefer_17_100 = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Schaefer2018_17Networks_100_fsaverage_164k.gii')};
+        job.my.Overlay.Schaefer_17_200 = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Schaefer2018_17Networks_200_fsaverage_164k.gii')};
+        job.my.Overlay.Schaefer_17_400 = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Schaefer2018_17Networks_400_fsaverage_164k.gii')};
+        job.my.Overlay.Schaefer_17_600 = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Schaefer2018_17Networks_600_fsaverage_164k.gii')};
+    case 'fs_LR_32k'
+        job.my.Overlay.a2009s          = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_a2009s_150_fs_LR_32k.gii')};
+        job.my.Overlay.dk40            = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_DK40_70_fs_LR_32k.gii')};
+        job.my.Overlay.fan             = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_Fan_210_fs_LR_32k.gii')};
+        job.my.Overlay.mmp1            = {fullfile(Path_Boundary, 'lh.nodalBoundaryList_MMP1_360_fs_LR_32k.gii')};
+end
 
-job.my.Underlay           = job.my.Overlay;
+job.my.Underlay = job.my.Overlay;
 
 
 
@@ -125,41 +219,41 @@ job.my.Underlay           = job.my.Overlay;
 p = inputParser;
 validScalar = @(x) isnumeric(x) && isscalar(x);
 
-addParameter(p, 'multisurf',    0,                         validScalar);
-addParameter(p, 'usefsaverage', job.default.usefsaverage,  @ischar);
-addParameter(p, 'useOverlay',   job.default.useOverlay,    @ischar);
-addParameter(p, 'useUnderlay',  job.default.useUnderlay,   @ischar);
-addParameter(p, 'TransParency', job.default.TransParency,  validScalar);
-addParameter(p, 'rangeClip',    [],                        @(x) isnumeric(x) && length(x)==2);
-addParameter(p, 'rangeClim',    [],                        @(x) isnumeric(x) && length(x)==2);
-addParameter(p, 'Colormap',     job.default.Colormap,      @isnumeric);
-addParameter(p, 'view',         'top',                     @ischar);
-addParameter(p, 'imgprint',     0);
-addParameter(p, 'imgprintDir',  '');
+addParameter(p, 'multisurf',      0,                          validScalar);
+addParameter(p, 'useAverageSurf', job.default.useAverageSurf, @ischar);
+addParameter(p, 'useOverlay',     job.default.useOverlay,     @ischar);
+addParameter(p, 'useUnderlay',    job.default.useUnderlay,    @ischar);
+addParameter(p, 'TransParency',   job.default.TransParency,   validScalar);
+addParameter(p, 'rangeClip',      [],                         @(x) isnumeric(x) && length(x)==2);
+addParameter(p, 'rangeClim',      [],                         @(x) isnumeric(x) && length(x)==2);
+addParameter(p, 'Colormap',       job.default.Colormap,       @isnumeric);
+addParameter(p, 'view',           'top',                      @ischar);
+addParameter(p, 'imgprint',       0);
+addParameter(p, 'imgprintDir',    '');
 
 parse(p, varargin{:});
 
-job.multisurf    = p.Results.multisurf;
-job.usefsaverage = p.Results.usefsaverage;
-job.useOverlay   = p.Results.useOverlay;
-job.useUnderlay  = p.Results.useUnderlay;
-job.TransParency = 1 - p.Results.TransParency;
-job.rangeClip    = p.Results.rangeClip;
-job.rangeClim    = p.Results.rangeClim;
-job.Colormap     = p.Results.Colormap;
-job.view         = p.Results.view;
-job.imgprint     = p.Results.imgprint;
-job.imgprintDir  = p.Results.imgprintDir;
+job.multisurf      = p.Results.multisurf;
+job.useAverageSurf = p.Results.useAverageSurf;
+job.useOverlay     = p.Results.useOverlay;
+job.useUnderlay    = p.Results.useUnderlay;
+job.TransParency   = 1 - p.Results.TransParency;
+job.rangeClip      = p.Results.rangeClip;
+job.rangeClim      = p.Results.rangeClim;
+job.Colormap       = p.Results.Colormap;
+job.view           = p.Results.view;
+job.imgprint       = p.Results.imgprint;
+job.imgprintDir    = p.Results.imgprintDir;
 
-switch lower(job.usefsaverage)
+switch lower(job.useAverageSurf)
     case 'central'
-        job.fsaverage   = job.my.fsaverage.central;
+        job.averageSurf   = job.my.averageSurf.central;
     case 'inflated'
-        job.fsaverage   = job.my.fsaverage.inflated;
+        job.averageSurf   = job.my.averageSurf.inflated;
     case 'ixi555'
-        job.fsaverage   = job.my.fsaverage.IXI555;
+        job.averageSurf   = job.my.averageSurf.IXI555;
     case 'custom'
-        job.fsaverage   = spm_select(1, 'mesh', 'Select Mesh files...');
+        job.averageSurf   = spm_select(1, 'mesh', 'Select Mesh files...');
     otherwise
         error('Invaild fsaverage');
 end
@@ -169,7 +263,7 @@ switch lower(job.useOverlay)
         
     case 'mc'
         job.Overlay = job.my.Overlay.mc;
-    case {'a2009s','dk40','fan','MMP1'}
+    case job.default.SupportedUnderLay
         job.Overlay = job.my.Overlay.(lower(job.useOverlay));
     case 'custom'
         job.Overlay = spm_select(1, 'mesh', 'Select Overlay files...');
@@ -182,7 +276,7 @@ switch lower(job.useUnderlay)
         
     case 'mc'
         job.Underlay = job.my.Underlay.mc;
-    case {'a2009s','dk40','fan','MMP1'}
+    case job.default.SupportedUnderLay
         job.Underlay = job.my.Underlay.(lower(job.useUnderlay));
     case 'custom'
         job.Underlay = spm_select(1, 'mesh', 'Select Underlay files...');
@@ -194,7 +288,6 @@ end
 
 %% Plot surface
 sinfo = cat_surf_info(Data, 1, 1);
-
 H     = plot_hemi(sinfo, job);
 
 set(H.patch, 'FaceAlpha', job.TransParency);
@@ -209,12 +302,11 @@ end
 
 
 %% Colormap
-H = cat_surf_render('ColourMap',H.axis, job.Colormap);
+H = cat_surf_render('ColourMap', H.axis, job.Colormap);
 
 
 
 %% Add Range
-
 if ~isempty(job.rangeClip)
     
     rangeClip = job.rangeClip;
@@ -292,7 +384,7 @@ function [H, sinfo] = plot_hemi(sinfo, job)
 
 for i = 1:length(sinfo)
     sinfo(i)       = rename_sinfo(sinfo(i));
-    sinfo(i).Pmesh = cat_surf_rename(job.fsaverage, 'side', sinfo(i).side);
+    sinfo(i).Pmesh = cat_surf_rename(job.averageSurf, 'side', sinfo(i).side);
     
     if strcmp('r',sinfo(i).side(1))
         oside = ['l' sinfo(i).side(2)];

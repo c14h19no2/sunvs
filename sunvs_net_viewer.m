@@ -19,7 +19,7 @@ function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %              load both hemis if possible.
 %              0 = load single hemi;
 %              1 = load both hemis (Default).
-%   'usefsaverage':
+% 'useAverageSurf':
 %              Choose an average surface to display. This surface file will
 %              define the shape of meshed object.
 %              'inflated', an inflated brain surface (Default);
@@ -28,23 +28,34 @@ function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %              'custom',   custom average surface.
 %     'useOverlay':
 %              Choose a gifti file to be the mesh overlay.
-%              'none',   no overlay mesh (Default);
-%              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
-%              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
-%              'Fan',    boundary infomation for Fan_210;
-%              'MMP1',    boundary infomation for MMP1_360;
-%              'custom', custom underlay.
+%              'none',            no overlay mesh (Default);
+%              'mc',              curv infomation for fsaverage surface;
+%              'a2009s',          boundary infomation for a2009s_150 (Destrieux atlas);
+%              'DK40',            boundary infomation for DK40_70 (Desikan atlas);
+%              'Fan',             boundary infomation for Fan_210;
+%              'MMP1',            boundary infomation for MMP1_360;
+%              'gordon',          boundary infomation for MMP1_333;
+%              'schaefer_17_100', boundary infomation for Schaefer_17Networks_100;
+%              'schaefer_17_200', boundary infomation for Schaefer_17Networks_200;
+%              'schaefer_17_400', boundary infomation for Schaefer_17Networks_400;
+%              'schaefer_17_600', boundary infomation for Schaefer_17Networks_600;
+%              'custom',          custom overlay.
 %    'useUnderlay':
 %              Choose a gifti file to be the mesh underlay, this underlay will
 %              be the underlay texture of the display object.
-%              'none',   no overlay mesh (Default);
-%              'mc',     curv infomation for fsaverage surface;
-%              'a2009s', boundary infomation for a2009s_150 (Destrieux atlas);
-%              'DK40',   boundary infomation for DK40_70 (Desikan atlas);
-%              'Fan',    boundary infomation for Fan_210;
-%              'MMP1',    boundary infomation for MMP1_360;
-%              'custom', custom underlay.
+%              Choose a gifti file to be the mesh overlay.
+%              'none',            no overlay mesh (Default);
+%              'mc',              curv infomation for fsaverage surface;
+%              'a2009s',          boundary infomation for a2009s_150 (Destrieux atlas);
+%              'DK40',            boundary infomation for DK40_70 (Desikan atlas);
+%              'Fan',             boundary infomation for Fan_210;
+%              'MMP1',            boundary infomation for MMP1_360;
+%              'gordon',          boundary infomation for MMP1_333;
+%              'schaefer_17_100', boundary infomation for Schaefer_17Networks_100;
+%              'schaefer_17_200', boundary infomation for Schaefer_17Networks_200;
+%              'schaefer_17_400', boundary infomation for Schaefer_17Networks_400;
+%              'schaefer_17_600', boundary infomation for Schaefer_17Networks_600;
+%              'custom',          custom underlay.
 %   'TransParency':
 %              Set the transparency for surface object, a value which
 %              ranges from 0 to 1. The default value is 0.30.
@@ -121,59 +132,65 @@ function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %              3: Dodecahedron.
 %
 % Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/08/26, Ningkai.Wang.1993@gmail.com
+% Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/01/16, jinhui.Wang.1982@gmail.com
 %==========================================================================
 
 
 %% Add path
 Dir_thisFunction = which('sunvs_net_viewer');
-[PathF, ~, ~] = fileparts(Dir_thisFunction);
+[PathF, ~, ~]  = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
 addpath([PathF filesep 'inflatedGiftiFiles']);
+defaultSurface = 'lh.inflated.Uniform.gii';
 
 
 
 %% User input Parser
 p = inputParser;
 validScalar = @(x) isnumeric(x) && isscalar(x);
-addParameter(p, 'multisurf',     1,             validScalar);
-addParameter(p, 'hemi',          'lh',          @ischar);
-addParameter(p, 'usefsaverage',  'inflated',    @ischar);
-addParameter(p, 'useOverlay',    'none',        @ischar);
-addParameter(p, 'useUnderlay',   'mc',          @ischar);
-addParameter(p, 'TransParency',  0.30,          validScalar);
-addParameter(p, 'view',          'top',         @ischar);
-addParameter(p, 'imgprint',      0);
-addParameter(p, 'imgprintDir',   []);
-addParameter(p, 'dpi',           600,           validScalar);
+addParameter(p, 'multisurf',          1,                  validScalar);
+addParameter(p, 'hemi',               'lh',               @ischar);
+addParameter(p, 'useAverageSurf',     'inflated',         @ischar);
+addParameter(p, 'useOverlay',         'none',             @ischar);
+addParameter(p, 'useUnderlay',        'mc',               @ischar);
+addParameter(p, 'TransParency',       0.30,               validScalar);
+addParameter(p, 'view',               'top',              @ischar);
+addParameter(p, 'imgprint',           0);
+addParameter(p, 'imgprintDir',        []);
+addParameter(p, 'dpi',                600,                validScalar);
 
-addParameter(p, 'ModuleColor',   [],                 @(x) size(x,2)==3 && isnumeric(x));
-addParameter(p, 'ModuleTexture', '',                 @ischar);
-addParameter(p, 'LineColorPos',  [252,146,114]./255, @(x) length(x)==3 && isnumeric(x));
-addParameter(p, 'LineColorNeg',  [85,165,145]./255,  @(x) length(x)==3 && isnumeric(x));
-addParameter(p, 'NodeWeight',    1,                  @isnumeric);
-addParameter(p, 'EdgeWeight',    1,                  @isnumeric);
-addParameter(p, 'Label',         0,                  @isnumeric);
-addParameter(p, 'LabelFontName', 'Arial',            @ischar);
+addParameter(p, 'ModuleColor',        [],                 @(x) size(x,2)==3 && isnumeric(x));
+addParameter(p, 'ModuleTexture',      '',                 @ischar);
+addParameter(p, 'LineColorPos',       [252,146,114]./255, @(x) length(x)==3 && isnumeric(x));
+addParameter(p, 'LineColorNeg',       [85,165,145]./255,  @(x) length(x)==3 && isnumeric(x));
+addParameter(p, 'NodeWeight',         1,                  @isnumeric);
+addParameter(p, 'EdgeWeight',         1,                  @isnumeric);
+addParameter(p, 'Label',              0,                  @isnumeric);
+addParameter(p, 'LabelFontName',      'Arial',            @ischar);
 
 % Surface mesh
-addParameter(p, 'Data', 'lh.inflated.Uniform.gii', @ischar);
+addParameter(p, 'Data', defaultSurface, @ischar);
 
 % Surface material
-addParameter(p, 'AmbientStrength',    0.9,           validScalar);
-addParameter(p, 'DiffuseStrength',    0.01,          validScalar);
-addParameter(p, 'SpecularStrength',   0.01,          validScalar);
-addParameter(p, 'SpecularExponent',   0.01,           validScalar);
+addParameter(p, 'AmbientStrength',    0.9,                validScalar);
+addParameter(p, 'DiffuseStrength',    0.01,               validScalar);
+addParameter(p, 'SpecularStrength',   0.01,               validScalar);
+addParameter(p, 'SpecularExponent',   0.01,               validScalar);
 
 parse(p, varargin{:});
 
 
 
 %% Jobs
-jobpass.multisurf    = p.Results.multisurf;
-jobpass.usefsaverage = p.Results.usefsaverage;
-jobpass.useOverlay   = p.Results.useOverlay;
-jobpass.useUnderlay  = p.Results.useUnderlay;
-jobpass.TransParency = p.Results.TransParency;
+jobpass.multisurf      = p.Results.multisurf;
+jobpass.useAverageSurf = p.Results.useAverageSurf;
+jobpass.useOverlay     = p.Results.useOverlay;
+jobpass.useUnderlay    = p.Results.useUnderlay;
+jobpass.TransParency   = p.Results.TransParency;
+
+if strcmpi(p.Results.Data, defaultSurface)
+    jobpass.templateSpace = 'fsaverage_164k';
+end
 
 cjob                 = struct2cell(jobpass);
 fjob                 = fieldnames(jobpass);
@@ -204,12 +221,12 @@ job.Label            = p.Results.Label;
 job.LabelFontName    = p.Results.LabelFontName;
 job.Data             = p.Results.Data;
 
-if job.Data == 'lh.inflated.Uniform.gii'
+if strcmpi(job.Data, defaultSurface)
     switch job.hemi
         case {'lh','l'}
-            job.Data = 'lh.inflated.Uniform.gii';
+            job.Data = defaultSurface;
         case {'rh','r'}
-            job.Data = 'rh.inflated.Uniform.gii';
+            job.Data = ['r' defaultSurface(2:end)];
     end
 end
 
