@@ -123,6 +123,7 @@ addpath([PathF filesep 'inflatedGiftiFiles']);
 %% Determine the template space
 p = inputParser;
 addParameter(p, 'templateSpace', '', @ischar);
+p.KeepUnmatched = true;
 parse(p, varargin{:});
 job.templateSpace = p.Results.templateSpace;
 
@@ -220,6 +221,7 @@ p = inputParser;
 validScalar = @(x) isnumeric(x) && isscalar(x);
 
 addParameter(p, 'multisurf',      0,                          validScalar);
+addParameter(p, 'templateSpace', '', @ischar);
 addParameter(p, 'useAverageSurf', job.default.useAverageSurf, @ischar);
 addParameter(p, 'useOverlay',     job.default.useOverlay,     @ischar);
 addParameter(p, 'useUnderlay',    job.default.useUnderlay,    @ischar);

@@ -207,8 +207,14 @@ job.imgprint         = p.Results.imgprint;
 job.imgprintDir      = p.Results.imgprintDir;
 job.dpi              = p.Results.dpi;
 
-job.pathNodeFile     = pathNodeFile;
-job.pathEdgeFile     = pathEdgeFile;
+if nargin==0;
+    job.pathNodeFile = '';
+    job.pathEdgeFile = '';
+elseif nargin==1
+    job.pathNodeFile = pathNodeFile;
+    job.pathEdgeFile = '';
+end
+
 job.colorModules     = p.Results.ModuleColor;
 
 if ~isempty(p.Results.ModuleTexture)
@@ -411,7 +417,7 @@ switch lower(job.view)
         end
 end
 
-if ~isempty(pathNodeFile) 
+if ~isempty(job.pathNodeFile) 
     if ~isempty(Nodes(1, 6)) && job.Label==1
         Label_Node = Nodes{1, 6}; % Encode label
         for i_label = 1:length(Label_Node)
