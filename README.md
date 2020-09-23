@@ -1,5 +1,9 @@
 # SUNVS - A Surface-based Brain Network Viewer Toolbox
 
+***Website:** <https://github.com/c14h19no2/SUNVS>*
+***DOI:** 10.5281/zenodo.4044780*
+***Please cite as:** Wang, Ningkai. (2020). c14h19no2/SUNVS: SUNVS (Version 0.0.0.1). Zenodo. doi:10.5281/zenodo.4044780*
+
 ![Exapmle File](https://github.com/c14h19no2/SUNVS/blob/master/Example/draft/Example.png "Exapmle File")
 
 ## 绘图指引
