@@ -131,7 +131,7 @@ switch job.templateSpace
     case ''
         g = gifti(Data);
         
-        if isempty(g.faces)
+        if ~isfield(g,'faces')
             prompt         = 'Choose the template name:';
             ListString     = {'fsaverage_164k',...
                 'fs_LR_32k'...
