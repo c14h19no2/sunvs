@@ -39,9 +39,9 @@ d = 0;
 while isempty(sinfo.side)
     d = d + 1;
     if d == 1
-        prompt   = {'Enter hemi (left or right)'};
+        prompt   = {'Enter hemi (left, right, or both)'};
     else
-        prompt   = {'Enter hemi (left or right)\n PLEASE CHECK YOUR SPELL!'};
+        prompt   = {'Enter hemi (left, right, or both)\n PLEASE CHECK YOUR SPELL!'};
     end
     
     dlgtitle = 'Input';
@@ -54,11 +54,14 @@ while isempty(sinfo.side)
         
         switch lower(answer)
             case {'lh', 'left', 'lh.', 'left.'}
-                sinfo.side = 'lh'; SIDE_annot = 'lh';
+                sinfo.side = 'lh';
                 filename2 = ['lh.' filename1];
             case {'rh', 'right', 'rh.', 'right.'}
-                sinfo.side = 'rh'; SIDE_annot = 'rh';
+                sinfo.side = 'rh';
                 filename2 = ['rh.' filename1];
+            case {'mesh', 'both'}
+                sinfo.side = 'mesh';
+                filename2 = ['mesh.' filename1];
         end
     else
         return
@@ -72,12 +75,12 @@ switch length(label)
         defaultUsefsaverage = 'inflated_32k';
 end
 
-pathFsaverageCentral      = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [SIDE_annot, '.central.freesurfer.gii'])};
-pathFsaverageInflated     = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [SIDE_annot, '.inflated.freesurfer.gii'])};
-pathFsaverageIXI555       = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [SIDE_annot, '.central.Template_T1_IXI555_MNI152_GS.gii'])};
-pathFsaverageCentral_32k  = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [SIDE_annot, '.central.freesurfer.gii'])};
-pathFsaverageInflated_32k = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [SIDE_annot, '.inflated.freesurfer.gii'])};
-pathFsaverageIXI555_32k   = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [SIDE_annot, '.central.Template_T1_IXI555_MNI152_GS.gii'])};
+pathFsaverageCentral      = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [sinfo.side, '.central.freesurfer.gii'])};
+pathFsaverageInflated     = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [sinfo.side, '.inflated.freesurfer.gii'])};
+pathFsaverageIXI555       = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces', [sinfo.side, '.central.Template_T1_IXI555_MNI152_GS.gii'])};
+pathFsaverageCentral_32k  = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [sinfo.side, '.central.freesurfer.gii'])};
+pathFsaverageInflated_32k = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [sinfo.side, '.inflated.freesurfer.gii'])};
+pathFsaverageIXI555_32k   = {fullfile(spm('dir'),'toolbox','cat12','templates_surfaces_32k', [sinfo.side, '.central.Template_T1_IXI555_MNI152_GS.gii'])};
 
 p = inputParser;
 addParameter(p, 'usefsaverage', defaultUsefsaverage,  @ischar);
