@@ -3,8 +3,11 @@
 ## Grab your towel and don't panic
 
 *Please **feel free** to use this toolbox.*
+
 ***Website:** <https://github.com/c14h19no2/SUNVS>*
+
 ***DOI:** 10.5281/zenodo.4044779*
+
 ***I am pleasure if you'd like to cite me as follows:** Wang, Ningkai. (2020). c14h19no2/SUNVS - A Surface-based Brain Network Viewer Toolbox. Zenodo. doi:10.5281/zenodo.4044779*
 
 ![Exapmle File](https://github.com/c14h19no2/SUNVS/blob/master/Example/draft/Example.png "Exapmle File")
