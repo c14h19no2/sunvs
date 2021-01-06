@@ -149,7 +149,7 @@ switch job.templateSpace
             end
             
         else
-            facesData  = int32(double(g.cdata)); % for dealing with class 'file_array'
+            facesData  = int32(double(g.faces)); % for dealing with class 'file_array'
             facesStructfs_LR_32k_lh   = load('faces_fs_LR_32k_lh.mat');
             facesStructfs_LR_32k_rh   = load('faces_fs_LR_32k_rh.mat');
             facesStructfsaverage_164k = load('faces_fsaverage_164k.mat');
