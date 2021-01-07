@@ -169,10 +169,9 @@ switch job.templateSpace
                 job.templateSpace     = 'fsaverage_164k';
             else
                 job.templateSpace     = 'Others';
-%                 if strcmpi(job.useOverlay,'none') || strcmpi(job.useUnderlay,'none')
-%                     warning('Unknown template space detected, please DISABLE the underlay and overlay!!!');
-%                 end
-                warning('Unknown template space detected, please DISABLE the underlay and overlay!!!');
+                if strcmpi(job.default.useOverlay,'none') || strcmpi(job.default.useOverlay,'none')
+                    warning('Unknown template space detected, please DISABLE the underlay and overlay!!!');
+                end
             end
         end
     case 'fsaverage_164k'

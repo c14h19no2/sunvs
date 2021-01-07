@@ -275,7 +275,12 @@ if ~isempty(job.pathNodeFile)
         Size_Nodes_Exist   = ones(length(Size_Nodes_Exist),1) * 2 * 1.75;
     end
     
-    Module_Nodes_Exist = Module_Nodes(Size_Node > 0);
+    if length(unique(Size_Node))==1
+        Module_Nodes_Exist = Module_Nodes;
+    else
+        Module_Nodes_Exist = Module_Nodes(Size_Node > 0);
+    end
+    
     hold on;
     
     Module_Nodes_Exist_shape    = imag(Module_Nodes_Exist);
