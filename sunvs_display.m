@@ -19,6 +19,7 @@ function varargout = sunvs_display(Data, varargin)
 %              Choose an average surface to display. This surface file will
 %              define the shape of meshed object.
 %              'inflated', an inflated brain surface (Default);
+%              'original', the surface mesh of the input data;
 %              'central',  central surface;
 %              'IXI555',   Template_T1_IXI555_MNI152_GS.gii released by CAT12;
 %              'patch',    surface patch released by CAT12.
@@ -105,6 +106,7 @@ function varargout = sunvs_display(Data, varargin)
 
 %% Extension detection
 [~, ~, ext] = fileparts(Data);
+sinfo = cat_surf_info(Data, 1, 1);
 
 switch ext
     case '.gii'
@@ -194,6 +196,7 @@ switch job.templateSpace
 end
 
 Path_Boundary               = fullfile(fileparts(which('sunvs_display')), 'nodalBoundaryList');
+job.my.averageSurf.original = {Data};
 job.my.averageSurf.central  = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.freesurfer.gii')};
 job.my.averageSurf.inflated = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.inflated.freesurfer.gii')};
 job.my.averageSurf.IXI555   = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.Template_T1_IXI555_MNI152_GS.gii')};
@@ -255,6 +258,8 @@ job.imgprint       = p.Results.imgprint;
 job.imgprintDir    = p.Results.imgprintDir;
 
 switch lower(job.useAverageSurf)
+    case 'original'
+        job.averageSurf   = job.averageSurf.original;
     case 'central'
         job.averageSurf   = job.my.averageSurf.central;
     case 'inflated'
@@ -300,7 +305,6 @@ end
 
 
 %% Plot surface
-sinfo = cat_surf_info(Data, 1, 1);
 H     = plot_hemi(sinfo, job);
 
 set(H.patch, 'FaceAlpha', job.TransParency);
@@ -397,6 +401,13 @@ function [H, sinfo] = plot_hemi(sinfo, job)
 
 for i = 1:length(sinfo)
     sinfo(i)       = rename_sinfo(sinfo(i));
+    
+    switch job.useAverageSurf
+        case {'custom','original'}
+            
+        otherwise
+            sinfo(i).Pmesh = cat_surf_rename(job.averageSurf, 'side', sinfo(i).side);
+    end
     
     if strcmp('r',sinfo(i).side(1))
         oside = ['l' sinfo(i).side(2)];
