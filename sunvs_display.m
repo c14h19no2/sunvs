@@ -21,6 +21,8 @@ function varargout = sunvs_display(Data, varargin)
 %              'inflated', an inflated brain surface (Default);
 %              'central',  central surface;
 %              'IXI555',   Template_T1_IXI555_MNI152_GS.gii released by CAT12;
+%              'patch',    surface patch released by CAT12.
+%              'sphere',   surface sphere.
 %              'custom',   custom average surface..
 %     'useOverlay':
 %              Choose a gifti file to be the mesh overlay.
@@ -117,6 +119,7 @@ Dir_thisFunction = which('sunvs_display');
 [PathF, ~, ~]    = fileparts(Dir_thisFunction);
 addpath([PathF filesep 'nodalBoundaryList']);
 addpath([PathF filesep 'inflatedGiftiFiles']);
+addpath([PathF filesep 'matFiles']);
 
 
 
@@ -150,15 +153,17 @@ switch job.templateSpace
             
         else
             facesData  = int32(double(g.faces)); % for dealing with class 'file_array'
-            facesStructfs_LR_32k_lh   = load('faces_fs_LR_32k_lh.mat');
-            facesStructfs_LR_32k_rh   = load('faces_fs_LR_32k_rh.mat');
-            facesStructfsaverage_164k = load('faces_fsaverage_164k.mat');
+            facesStructfs_LR_32k_lh         = load('faces_fs_LR_32k_lh.mat');
+            facesStructfs_LR_32k_rh         = load('faces_fs_LR_32k_rh.mat');
+            facesStructfsaverage_164k       = load('faces_fsaverage_164k.mat');
+            facesStructfsaverage_patch_164k = load('faces_fsaverage_patch_164k.mat');
             
             if isequal(facesData,     facesStructfs_LR_32k_lh.faces);
                 job.templateSpace     = 'fs_LR_32k';
             elseif isequal(facesData, facesStructfs_LR_32k_rh.faces);
                 job.templateSpace     = 'fs_LR_32k';
-            elseif isequal(facesData, facesStructfsaverage_164k.faces);
+            elseif isequal(facesData, facesStructfsaverage_164k.faces) ...
+                    || isequal(facesData, facesStructfsaverage_patch_164k.faces);
                 job.templateSpace     = 'fsaverage_164k';
             else
                 error('Unknown template space detected, the SUNVS cannot display the surface!');
@@ -192,6 +197,8 @@ Path_Boundary               = fullfile(fileparts(which('sunvs_display')), 'nodal
 job.my.averageSurf.central  = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.freesurfer.gii')};
 job.my.averageSurf.inflated = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.inflated.freesurfer.gii')};
 job.my.averageSurf.IXI555   = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.central.Template_T1_IXI555_MNI152_GS.gii')};
+job.my.averageSurf.patch    = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.patch.freesurfer.gii')};
+job.my.averageSurf.sphere   = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.sphere.freesurfer.gii')};
 job.my.Overlay.mc           = {fullfile(spm('dir'), 'toolbox', 'cat12', temFolder, 'lh.mc.freesurfer.gii')};
         
 switch job.templateSpace
@@ -229,7 +236,7 @@ addParameter(p, 'TransParency',   job.default.TransParency,   validScalar);
 addParameter(p, 'rangeClip',      [],                         @(x) isnumeric(x) && length(x)==2);
 addParameter(p, 'rangeClim',      [],                         @(x) isnumeric(x) && length(x)==2);
 addParameter(p, 'Colormap',       job.default.Colormap,       @isnumeric);
-addParameter(p, 'view',           'top',                      @ischar);
+addParameter(p, 'view',           'left',                      @ischar);
 addParameter(p, 'imgprint',       0);
 addParameter(p, 'imgprintDir',    '');
 
@@ -254,6 +261,10 @@ switch lower(job.useAverageSurf)
         job.averageSurf   = job.my.averageSurf.inflated;
     case 'ixi555'
         job.averageSurf   = job.my.averageSurf.IXI555;
+    case 'patch'
+        job.averageSurf   = job.my.averageSurf.patch;
+    case 'sphere'
+        job.averageSurf   = job.my.averageSurf.sphere;
     case 'custom'
         job.averageSurf   = spm_select(1, 'mesh', 'Select Mesh files...');
     otherwise
@@ -386,7 +397,6 @@ function [H, sinfo] = plot_hemi(sinfo, job)
 
 for i = 1:length(sinfo)
     sinfo(i)       = rename_sinfo(sinfo(i));
-    sinfo(i).Pmesh = cat_surf_rename(job.averageSurf, 'side', sinfo(i).side);
     
     if strcmp('r',sinfo(i).side(1))
         oside = ['l' sinfo(i).side(2)];
