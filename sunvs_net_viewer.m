@@ -241,7 +241,7 @@ H = sunvs_display(job.Data, PARAs{:});
 
 
 %% Nodes setting
-if ~isempty(job.pathNodeFile)
+if ~isfield(job.pathNodeFile)
     
     fid   = fopen(job.pathNodeFile);
     Nodes = textscan(fid,'%n %n %n %n %n %s','CommentStyle','#');
