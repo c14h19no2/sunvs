@@ -404,7 +404,7 @@ for i = 1:length(sinfo)
     
     switch job.useAverageSurf
         case {'custom','original'}
-            
+            sinfo(i).Pmesh = job.averageSurf;
         otherwise
             sinfo(i).Pmesh = cat_surf_rename(job.averageSurf, 'side', sinfo(i).side);
     end

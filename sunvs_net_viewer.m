@@ -213,6 +213,9 @@ if nargin==0;
 elseif nargin==1
     job.pathNodeFile = pathNodeFile;
     job.pathEdgeFile = '';
+elseif nargin>=2
+    job.pathNodeFile = pathNodeFile;
+    job.pathEdgeFile = pathEdgeFile;
 end
 
 job.colorModules     = p.Results.ModuleColor;
@@ -241,7 +244,7 @@ H = sunvs_display(job.Data, PARAs{:});
 
 
 %% Nodes setting
-if ~isfield(job.pathNodeFile)
+if ~isempty(job.pathNodeFile)
     
     fid   = fopen(job.pathNodeFile);
     Nodes = textscan(fid,'%n %n %n %n %n %s','CommentStyle','#');
