@@ -326,7 +326,12 @@ if ~isempty(job.pathEdgeFile)
 %     importdata is not recommended, for it sometimes return wired results 
 %     (maybe for the wrong text encoding).
     MAT_Edges  = MAT_Edges(Size_Node>0, Size_Node>0);
-    MAT_Edges  = triu(MAT_Edges); % Undirected graph
+    MAT_Edges  = triu(MAT_Edges, 1); % Undirected graph
+    VAT_Edges  = triu(MAT_Edges',1);
+    
+    if VAT_Edges==MAT_Edges
+        warning('Undirected graph detected, upper triangular will be displayed!')
+    end
     
     [Node1_Pos_Edge, Node2_Pos_Edge] = find(MAT_Edges>0);
     [Node1_Neg_Edge, Node2_Neg_Edge] = find(MAT_Edges<0);
