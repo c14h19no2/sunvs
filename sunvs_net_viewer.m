@@ -251,12 +251,12 @@ if ~isempty(job.pathNodeFile)
     fclose(fid);
     
     MAT_Corr      = cell2mat(Nodes(1, 1:3));
-    [Size_Node,~] = size(MAT_Corr(:,1));
+    [Num_Node,~] = size(MAT_Corr(:,1));
     
     if ~isempty(Nodes(1, 4))
         Module_Nodes = cell2mat(Nodes(1, 4)); % Encode color and shape
     else
-        Module_Nodes = ones(Size_Node,1);
+        Module_Nodes = ones(Num_Node,1);
     end
     
     if ~isempty(Nodes(1, 5))
@@ -318,9 +318,15 @@ end
 
 %% Edges setting
 if ~isempty(job.pathEdgeFile)
-    MAT_Edges = importdata(job.pathEdgeFile);
-    MAT_Edges = MAT_Edges(Size_Node>0, Size_Node>0);
-    MAT_Edges = triu(MAT_Edges);
+    formatSpec = repmat('%f', 1, Num_Node);
+    fid        = fopen(job.pathEdgeFile, 'rt');
+    MAT_Edges  = cell2mat(textscan(fid, formatSpec));
+    fclose(fid);
+%     MAT_Edges  = importdata(job.pathEdgeFile); 
+%     importdata is not recommended, for it sometimes return wired results 
+%     (maybe for the wrong text encoding).
+    MAT_Edges  = MAT_Edges(Size_Node>0, Size_Node>0);
+    MAT_Edges  = triu(MAT_Edges); % Undirected graph
     
     [Node1_Pos_Edge, Node2_Pos_Edge] = find(MAT_Edges>0);
     [Node1_Neg_Edge, Node2_Neg_Edge] = find(MAT_Edges<0);
