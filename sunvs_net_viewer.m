@@ -110,7 +110,7 @@ function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %     -------------------------------------------------------------
 %     Col1       col2       col3    col4       col5        col6
 %     ----------------------HERE BEGINS----------------------------
-%     23.703    48.904     -4.142    3           0   G_and_S_frontomargin
+%     23.703    48.904     -4.142    3           1   G_and_S_frontomargin
 %     38.691    -72.746    -7.132    2+1i        0   G_and_S_occipital_inf
 %     11.398    -31.895    63.072    1+2i        0   G_and_S_paracentral
 %     12.311    -46.822    9.473     1           0   G_cingul_Post_ventral
@@ -123,13 +123,13 @@ function H = sunvs_net_viewer(pathNodeFile, pathEdgeFile, varargin)
 %     Column 4: Module index, including two parts:
 %         real part:      denotes node color (depends on colormap);
 %         Imaginary part: denotes node shape (depends on following shape indices);
-%
-%     shape indices:
-%          Shape index for each node (N*1 matrix).
-%              0: Shpere;
-%              1: Cube;
-%              2: Regular tetrahedron;
-%              3: Dodecahedron.
+%                   shape indices:
+%                       Shape index for each node (N*1 matrix).
+%                           0: Shpere;
+%                           1: Cube;
+%                           2: Regular tetrahedron;
+%                           3: Dodecahedron.
+%     Column 5: Node size.
 %
 % Ningkai WANG,IBRR, SCNU, Guangzhou, 2020/08/26, Ningkai.Wang.1993@gmail.com
 % Jinhui WANG, IBRR, SCNU, Guangzhou, 2020/01/16, jinhui.Wang.1982@gmail.com
@@ -352,6 +352,8 @@ if ~isempty(job.pathEdgeFile)
             CELL_Pos_Edge_Width = num2cell((mapminmax(MAT_Edges(MAT_Edges>0)')'+1.5)*2.2);
         elseif job.EdgeWeight == 0
             CELL_Pos_Edge_Width = num2cell(ones(NUM_Pos_Edge,1)*2.2);
+		else
+			warning('The value of parameter ''EdgeWeight'' must be 1 or 0!');
         end
         
         CELL_Pos_Edge_Color   = num2cell(job.LineColorPos, 2);
@@ -376,6 +378,8 @@ if ~isempty(job.pathEdgeFile)
             CELL_Neg_Edge_Width = num2cell((mapminmax(MAT_Edges(MAT_Edges<0)')'+1.5)*2.2);
         elseif job.EdgeWeight == 0
             CELL_Neg_Edge_Width = num2cell(ones(NUM_Neg_Edge,1)*3);
+		else
+			warning('The value of parameter ''EdgeWeight'' must be 1 or 0!');
         end
         
         CELL_Neg_Edge_Color = num2cell(job.LineColorNeg, 2);
