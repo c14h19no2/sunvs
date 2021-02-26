@@ -40,7 +40,7 @@ NumVer      = length(label_lh);
 
 PATH_thisFile   = which('sunvs_saveBoundaryGifti');
 PATH_thisFolder = fileparts(PATH_thisFile);
-PATH_matFolder  = [PATH_thisFolder filesep 'nodalBoundaryList'];
+PATH_matFolder  = [PATH_thisFolder filesep 'matFiles'];
 PATH_catMfile   = which('cat12');
 PATH_catFolder  = fileparts(PATH_catMfile);
 
