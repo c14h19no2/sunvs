@@ -303,7 +303,7 @@ switch lower(job.useUnderlay)
     case job.default.SupportedUnderLay
         job.Underlay = job.my.Underlay.(lower(job.useUnderlay));
     case 'custom'
-        job.Underlay = spm_select(1, 'mesh', 'Select Underlay files...');
+        job.Underlay = {spm_select(1, 'mesh', 'Select Underlay files...')};
     otherwise
         error('Invaild Overlay');
 end
