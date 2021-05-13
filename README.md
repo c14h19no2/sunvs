@@ -74,19 +74,19 @@
 
 软件包即会自动找到 *'lh'* 的对侧半球，即 *'rh'*，将左右半球同时绘制出来。同理，如果你选择 *'rh'* 时将 *'multisurf'* 参数设置为 1，代码也会自动在 *'rh'* 的同路径下寻到 *'lh'*。
 
-##### 2.1.3. 选择大脑形状，参数：*'usefsaverage'*
+##### 2.1.3. 选择大脑形状，参数：*'useAverageSurf'*
 
 *Surface* 是把皮层抽象化得到的二维平面，理论上在拓扑结构不变的前提下可以扭曲成任何形状，例如膨胀起来便于观察；可以呈现为褶皱的 *central surface* 或是平滑的 *pial surface*；甚至可以将其信息映射到一个球面上。这种高度自由的特性为我们的数据可视化提供了许多便利，我们可以用不同的载体来呈现 *Surface* 上的信息。
 
 比如：
 
 ```matlab
-    sunvs_display('lh.mySurface.gii', 'multisurf', '1', 'usefsaverage', 'inflated');
+    sunvs_display('lh.mySurface.gii', 'multisurf', '1', 'useAverageSurf', 'inflated');
     % 使用膨胀的 surface 作为数据可视化的大脑底版，优势在于可以将原本隐藏的脑沟暴露在外，便于观察。
 ```
 
 ```matlab
-    sunvs_display('lh.mySurface.gii', 'multisurf', '1', 'usefsaverage', 'IXI555');
+    sunvs_display('lh.mySurface.gii', 'multisurf', '1', 'useAverageSurf', 'IXI555');
     % 使用 CAT12 DARTEL 模版的 surface 作为数据可视化的大脑底版，优势在于其与真实大脑形状相近。
     % 可以看到，利用多个参数的组合，我们可以在指定函数呈现左右半球的同时使用某个特定底版。
 ```
@@ -358,7 +358,7 @@ ans =
 那么我们需要中命令行窗口输入：
 
 ```matlab
-    sunvs_net_viewer('Content_EPAS.node', 'Content_EPAS.edge', 'usefsaverage', 'inflated',...
+    sunvs_net_viewer('Content_EPAS.node', 'Content_EPAS.edge', 'useAverageSurf', 'inflated',...
     'useUnderlay', 'mc', 'ModuleColor', myModuleColor, 'NodeWeight', 1, 'EdgeWeight', 1,...
     'TransParency', 0.5, 'Label', 1, 'view', 's','imgprint', 1);
 ```
@@ -379,7 +379,7 @@ ans =
 
 当图谱为 *.annot* 格式时，我们需要准备两个文件：*.gii* 文件和 *.annot* 文件，其中
 
-1. *.gii* 文件：*.gii* 文件的选择至关重要，该文件在这里用于提供 *Vertices* 的**坐标信息**。如前文（*sunvs_display* 的 *usefsaverage* 参数部分）所述，我们的 *.gii* 文件决定了脑的形状，也就决定了所有 *Vertices* 的坐标。由于我们计算坐标的目的是为了在 *Surface* 上绘制节点，因此**我们在这里选择的 *.gii* 文件必须和 *sunvs_net_viewer* 中使用的 *usefsaverage* 保持一致**
+1. *.gii* 文件：*.gii* 文件的选择至关重要，该文件在这里用于提供 *Vertices* 的**坐标信息**。如前文（*sunvs_display* 的 *usefsaverage* 参数部分）所述，我们的 *.gii* 文件决定了脑的形状，也就决定了所有 *Vertices* 的坐标。由于我们计算坐标的目的是为了在 *Surface* 上绘制节点，因此**我们在这里选择的 *.gii* 文件必须和 *sunvs_net_viewer* 中使用的 *useAverageSurf* 保持一致**
 2. *.annot* 文件决定了分区方式，只要直接把所用图谱的 *.annot* 文件路径放进来即可。
 
 ```matlab
@@ -417,7 +417,7 @@ ans =
     % 右脑
 ```
 
-该函数亦可使用 *'usefsaverage'* 参数，使用方法与 *sunvs_display* 相同。
+该函数亦可使用 *'useAverageSurf'* 参数，使用方法与 *sunvs_display* 相同。
 
 ### 4. tips
 
