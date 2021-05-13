@@ -184,7 +184,6 @@ addParameter(p, 'nodeSpcStr',         0.05,               validScalar);
 addParameter(p, 'nodeSpcExp',         0.50,               validScalar);
 % 0.65, 0.35, 0.35, 10
 
-
 parse(p, varargin{:});
 
 
