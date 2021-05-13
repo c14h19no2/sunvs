@@ -177,6 +177,14 @@ addParameter(p, 'DiffuseStrength',    0.01,               validScalar);
 addParameter(p, 'SpecularStrength',   0.01,               validScalar);
 addParameter(p, 'SpecularExponent',   0.01,               validScalar);
 
+% Node material
+addParameter(p, 'nodeAmbStr',         0.50,               validScalar);
+addParameter(p, 'nodeDifStr',         0.28,               validScalar);
+addParameter(p, 'nodeSpcStr',         0.05,               validScalar);
+addParameter(p, 'nodeSpcExp',         0.50,               validScalar);
+% 0.65, 0.35, 0.35, 10
+
+
 parse(p, varargin{:});
 
 
@@ -410,8 +418,33 @@ set(H.patch,...
 
 % Nodes Material
 if ~isempty(job.pathNodeFile)
+    job.nodeAmbStr = p.Results.nodeAmbStr;
+    job.nodeDifStr = p.Results.nodeDifStr;
+    job.nodeSpcStr = p.Results.nodeSpcStr;
+    job.nodeSpcExp = p.Results.nodeSpcExp;
+
     Material_Nodes = findobj(H.Nodes, 'Type', 'Surface');
-    set(Material_Nodes, 'AmbientStrength', 0.65, 'DiffuseStrength', 0.35, 'SpecularStrength', 0.35, 'SpecularExponent', 10);
+    
+    set(Material_Nodes, ...
+    'AmbientStrength',  job.nodeAmbStr,...
+    'DiffuseStrength',  job.nodeDifStr,...
+    'SpecularStrength', job.nodeSpcStr,...
+    'SpecularExponent', job.nodeSpcExp);
+end
+
+
+% Set Underlay Color
+switch jobpass.useUnderlay
+    case 'none'
+    H.patch.FaceColor = [255,251,240]/255;
+    if ~logical(sum(strcmpi(p.UsingDefaults, 'AmbientStrength')))
+        set(H.patch, 'AmbientStrength',  0.42); end
+    if ~logical(sum(strcmpi(p.UsingDefaults, 'DiffuseStrength')))
+        set(H.patch, 'DiffuseStrength',  0.38); end
+    if ~logical(sum(strcmpi(p.UsingDefaults, 'SpecularStrength')))
+        set(H.patch, 'SpecularStrength', 0.01); end
+    if ~logical(sum(strcmpi(p.UsingDefaults, 'SpecularExponent')))
+        set(H.patch, 'SpecularExponent', 1); end
 end
 
 % Light Setting

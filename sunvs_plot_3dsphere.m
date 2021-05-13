@@ -60,7 +60,7 @@ my_colors = p.Results.colormap;
 %% Create unit nodes
 
 % Create unit sphere
-[xSph, ySph, zSph] = sphere(500);
+[xSph, ySph, zSph] = sphere(30);
 
 % Create unit cube
 if any(shapefactor == 1) 
