@@ -20,6 +20,14 @@
 2. 本工具包适用于 164k *.gii* 格式的 *surface* 文件（共包含 163842 个顶点），双侧半球的 .gii 文件需分开储存
 3. 为方便软件识别，左脑的 surface *.gii* 文件建议更改前缀 *lh.*，右脑的 surface *.gii* 文件更改前缀为 *rh.*，如将 *myLeftBrain.gii* 更改为 *lh.myLeftBrain.gii*，*myRightBrain.gii* 更改为 *rh.myRightBrain.gii*
 
+由于 *CAT12* 对 *file_array* 类的支持仍不完备，使用本工具包前首先需要将 *CAT12* 工具包中的 *cat_surf_render* 中 line 248-249 间插入一行，否则本工具包运行时可能报错：
+
+```matlab
+    M.cdata = [M.cdata;Mt.cdata]; % line 248
+    M.cdata = double(M.cdata); % 这里插入！！！
+    labelmapclim = [min(M.cdata),max(M.cdata)]; % line 249
+```
+
 ### 1. 工具包内容
 
 #### 1.1. 主函数
