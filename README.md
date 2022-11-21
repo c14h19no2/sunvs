@@ -8,8 +8,9 @@
 
 ***DOI:** 10.5281/zenodo.4044779*  
 
-***I am pleasure if you'd like to cite me as follows:** Wang, Ningkai. (2020). c14h19no2/SUNVS - A Surface-based Brain Network Viewer Toolbox. Zenodo. doi:10.5281/zenodo.4044779*  
+***I would be pleasure if you'd like to cite me as follows:** Wang, Ningkai. (2020). c14h19no2/SUNVS - A Surface-based Brain Network Viewer Toolbox. Zenodo. doi:10.5281/zenodo.4044779*  
 
+Here is one exapmle output of this toolbox (titles and legends are added by Photoshop).
 ![Exapmle File](https://github.com/c14h19no2/SUNVS/blob/master/Example/draft/Example.png "Exapmle File")
 
 ## 绘图指引
@@ -20,12 +21,12 @@
 2. 本工具包适用于 164k *.gii* 格式的 *surface* 文件（共包含 163842 个顶点），双侧半球的 .gii 文件需分开储存
 3. 为方便软件识别，左脑的 surface *.gii* 文件建议更改前缀 *lh.*，右脑的 surface *.gii* 文件更改前缀为 *rh.*，如将 *myLeftBrain.gii* 更改为 *lh.myLeftBrain.gii*，*myRightBrain.gii* 更改为 *rh.myRightBrain.gii*
 
-由于 *CAT12* 对 *file_array* 类的支持仍不完备，使用本工具包前首先需要将 *CAT12* 工具包中的 *cat_surf_render* 中 line 248-249 间插入一行，否则本工具包运行时可能报错：
-
+由于 *CAT12* 对 *file_array* 类的支持仍不完备，使用本工具包前首先需要将 *CAT12* 工具包中的 *cat_surf_render* 中间插入一行，否则本工具包运行时可能报错。
+由于CAT12更新频繁，因此需要我们自己 Ctrl/cmd + F 找到需要插入代码的位置。对应代码如下：
 ```matlab
-    M.cdata = [M.cdata;Mt.cdata]; % line 248
-    M.cdata = double(M.cdata); % 这里插入！！！
-    labelmapclim = [min(M.cdata),max(M.cdata)]; % line 249
+    M.cdata = [M.cdata;Mt.cdata]; % <Ctrl/cmd + F 找到此行>
+    M.cdata = double(M.cdata); % <这里插入！！！>
+    labelmapclim = [min(M.cdata),max(M.cdata)]; % <Ctrl/cmd + F 找到此行>
 ```
 
 ### 1. 工具包内容
